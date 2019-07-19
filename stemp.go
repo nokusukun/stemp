@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-var findWords = regexp.MustCompile(`${\w+}`)
+var findWords = regexp.MustCompile(`{\w+}`)
 
 // Compile - Compiles a string template given a map of [string]interface{}.
 func Compile(template string, maps map[string]interface{}) string {
