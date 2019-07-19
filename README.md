@@ -26,7 +26,7 @@ func main() {
 
     resultStruct := stemp.CompileStruct("Hello {Name}, I'm {BotName}. Nice to meet you {asdasds}. I'm accessing the values from a struct!", myClient)
     
-    result := Compile("Hello {name}, I'm {botname}. I'm accessing the values from a map!", myMap)
+    result := stemp.Compile("Hello {name}, I'm {botname}. I'm accessing the values from a map!", myMap)
     
     fmt.Println(resultStruct)
     fmt.Println(result)
