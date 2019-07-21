@@ -60,5 +60,8 @@ These are the current available parameters
 * `w=int`
     * Sets the minimum width of the string.
 
+## Error Handling
+All stemp functions prvides a, accompanying `Strict` function that retuns an error along with the partial string when it hits a parsing error. 
+
 ## Docs
 https://godoc.org/github.com/nokusukun/stemp
