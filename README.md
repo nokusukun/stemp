@@ -21,7 +21,7 @@ type Client struct {
 
 
 func main() {
-    myClient := stemp.Client{Name: "Noku", BotName: "RegBot"}
+    myClient := Client{Name: "Noku", BotName: "RegBot"}
     myMap := map[string]interface{}{"name": "Nokui", "botname": "Somalia"}
 
     resultStruct := stemp.CompileStruct("Hello {Name}, I'm {BotName}. Nice to meet you {asdasds}. I'm accessing the values from a struct!", myClient)
