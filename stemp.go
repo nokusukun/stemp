@@ -1,6 +1,7 @@
 package stemp
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -9,16 +10,32 @@ import (
 
 var findWords = regexp.MustCompile(`{\w+}`)
 
+// CompileJSON compiles a template string given a JSON string.
+func CompileJSON(template, jsonstring string) string {
+	template, _ = CompileJSONStrict(template, jsonstring)
+	return template
+}
+
+// CompileJSONStrict compiles a template string given a JSON string.
+// Returns an error and the partial compiled string when it finds an invalid target.
+func CompileJSONStrict(template, jsonstring string) (string, error) {
+	maps := map[string]interface{}{}
+	err := json.Unmarshal([]byte(jsonstring), &maps)
+	if err != nil {
+		return template, err
+	}
+
+	template, err = CompileStrict(template, maps)
+	if err != nil {
+		return template, err
+	}
+
+	return template, nil
+}
+
 // Compile - Compiles a string template given a map of [string]interface{}.
 func Compile(template string, maps map[string]interface{}) string {
-	words := findWords.FindAllString(template, -1)
-	for _, source := range words {
-		sourcetxt := source[1 : len(source)-1]
-		target, exists := maps[sourcetxt]
-		if exists {
-			template = strings.ReplaceAll(template, source, fmt.Sprintf("%v", target))
-		}
-	}
+	template, _ = CompileStrict(template, maps)
 	return template
 }
 
@@ -42,14 +59,7 @@ func CompileStrict(template string, maps map[string]interface{}) (string, error)
 
 // CompileStruct - Compiles a string template given a struct.
 func CompileStruct(template string, maps interface{}) string {
-	words := findWords.FindAllString(template, -1)
-	for _, source := range words {
-		sourcetxt := source[1 : len(source)-1]
-		target := reflect.ValueOf(maps).FieldByName(sourcetxt)
-		if target.IsValid() {
-			template = strings.ReplaceAll(template, source, fmt.Sprintf("%v", target))
-		}
-	}
+	template, _ = CompileStructStrict(template, maps)
 	return template
 }
 
