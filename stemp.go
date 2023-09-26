@@ -49,7 +49,7 @@ func (p *Parameters) whitespace(length int) string {
 }
 
 func getParameters(stxt string) *Parameters {
-	finder := regexp.MustCompile(`[a-z]=[a-zA-Z0-9./?<>;'\[\]{}|!@#$%^&*()_+\-]+`)
+	finder := regexp.MustCompile(`[a-z]=[a-zA-Z0-9./?<>;'|!@#$%^&*()_+\-]+`)
 	elems := strings.Split(stxt, ":")
 	params := &Parameters{}
 
@@ -80,7 +80,7 @@ func getParameters(stxt string) *Parameters {
 	return params
 }
 
-var findWords = regexp.MustCompile(`{[\w_]+(:[a-zA-Z0-9,=\-./?<>;'\[\]{}|!@#$%^&*()_+ ]+)?}`)
+var findWords = regexp.MustCompile(`{[\w_]+(:[a-zA-Z0-9,=\-./?<>;'|!@#$%^&*()_+ ]+)?}`)
 
 // CompileJSON compiles a template string given a JSON string.
 func CompileJSON(template, jsonstring string) string {
