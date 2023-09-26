@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nokusukun/stemp"
+	"stemp"
 )
 
 type Client struct {
@@ -20,9 +20,9 @@ func main() {
 		"Harold,523 st. Sunset Overdrive",
 	}
 
-	resultStruct := stemp.CompileStruct("Hello [{Name:j=c,w=10}], I'm {BotName}. Nice to meet you {asdasds}. I'm accessing the values from a struct!", myClient)
+	resultStruct := stemp.CompileStruct("{_:w=3}Hello [{Name:j=c,w=10}], I'm {BotName}. Nice to meet you {asdasds}. I'm accessing the values from a struct!", myClient)
 
-	result := stemp.CompileJSON("   |{col1:j=c,w=10}|{col2:j=c,w=40}|\n---------------------------------------------------\n", `{"col1": "Name", "col2": "Address"}`)
+	result := stemp.CompileJSON("{_:w=3}|{col1:j=c,w=10}|{col2:j=c,w=40}|\n{_:w=60,f=-}\n", `{"col1": "Name", "col2": "Address"}`)
 	for idx, d := range data {
 		s := strings.Split(d, ",")
 
@@ -30,4 +30,6 @@ func main() {
 	}
 	fmt.Println(resultStruct)
 	fmt.Println(result)
+
+	fmt.Println(stemp.Inline("Hello {0}, I'm {1}. Nice to meet you {2}. I'm accessing the values from a struct! {0:w=10,j=c,f=*}", "Noku", "RegBot", "asdasds"))
 }

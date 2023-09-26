@@ -13,6 +13,7 @@ type Parameters struct {
 	Source  string
 	Justify string
 	Width   int
+	Fill    string
 }
 
 func (p *Parameters) BuildString(target string) string {
@@ -22,30 +23,33 @@ func (p *Parameters) BuildString(target string) string {
 	wsl := p.Width - len(target)
 
 	if p.Justify == "" || p.Justify == "l" {
-		target = target + whitespace(wsl)
+		target = target + p.whitespace(wsl)
 	} else if p.Justify == "c" {
-		target = whitespace(wsl/2) + target + whitespace(wsl/2)
+		target = p.whitespace(wsl/2) + target + p.whitespace(wsl/2)
 	} else if p.Justify == "r" {
-		target = whitespace(wsl) + target
+		target = p.whitespace(wsl) + target
 	}
 
 	if len(target) < p.Width {
-		target += whitespace(p.Width - len(target))
+		target += p.whitespace(p.Width - len(target))
 	}
 
 	return target
 }
 
-func whitespace(length int) string {
+func (p *Parameters) whitespace(length int) string {
+	if p.Fill == "" {
+		p.Fill = " "
+	}
 	ws := ""
 	for i := 0; i < length; i++ {
-		ws += " "
+		ws += p.Fill
 	}
 	return ws
 }
 
 func getParameters(stxt string) *Parameters {
-	finder := regexp.MustCompile(`[a-z]=[a-zA-Z0-9]+`)
+	finder := regexp.MustCompile(`[a-z]=[a-zA-Z0-9./?<>;'\[\]{}|!@#$%^&*()_+\-]+`)
 	elems := strings.Split(stxt, ":")
 	params := &Parameters{}
 
@@ -68,13 +72,15 @@ func getParameters(stxt string) *Parameters {
 				params.Justify = val
 			case "w":
 				params.Width, _ = strconv.Atoi(val)
+			case "f":
+				params.Fill = val
 			}
 		}
 	}
 	return params
 }
 
-var findWords = regexp.MustCompile(`{\w+(:[a-zA-Z0-9,= ]+)?}`)
+var findWords = regexp.MustCompile(`{[\w_]+(:[a-zA-Z0-9,=\-./?<>;'\[\]{}|!@#$%^&*()_+ ]+)?}`)
 
 // CompileJSON compiles a template string given a JSON string.
 func CompileJSON(template, jsonstring string) string {
@@ -99,6 +105,14 @@ func CompileJSONStrict(template, jsonstring string) (string, error) {
 	return template, nil
 }
 
+func Inline(template string, values ...any) string {
+	maps := map[string]interface{}{}
+	for i, v := range values {
+		maps[fmt.Sprintf("%d", i)] = v
+	}
+	return Compile(template, maps)
+}
+
 // Compile - Compiles a string template given a map of [string]interface{}.
 func Compile(template string, maps map[string]interface{}) string {
 	template, _ = CompileStrict(template, maps)
@@ -108,6 +122,7 @@ func Compile(template string, maps map[string]interface{}) string {
 // CompileStrict - Compiles a string template given a map of [string]interface{}.
 // Returns an error and the partial compiled string when it finds an invalid target.
 func CompileStrict(template string, maps map[string]interface{}) (string, error) {
+	maps["_"] = ""
 	words := findWords.FindAllString(template, -1)
 	hasError := false
 	for _, source := range words {
@@ -139,6 +154,11 @@ func CompileStructStrict(template string, maps interface{}) (string, error) {
 		sourcetxt := source[1 : len(source)-1]
 		params := getParameters(sourcetxt)
 		target := reflect.ValueOf(maps).FieldByName(params.Source)
+		if strings.HasPrefix(sourcetxt, "_:") {
+			template = strings.ReplaceAll(template, source, params.BuildString(""))
+			continue
+		}
+
 		if target.IsValid() {
 			template = strings.ReplaceAll(template, source, params.BuildString(fmt.Sprintf("%v", target)))
 		} else {
