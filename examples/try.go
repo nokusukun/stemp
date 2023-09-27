@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/nokusukun/stemp"
 	"strings"
-
-	"stemp"
 )
 
 type Client struct {
@@ -20,7 +19,7 @@ func main() {
 		"Harold,523 st. Sunset Overdrive",
 	}
 
-	resultStruct := stemp.CompileStruct("{_:w=3}Hello [{Name:j=c,w=10}], I'm {BotName}. Nice to meet you {asdasds}. I'm accessing the values from a struct!", myClient)
+	resultStruct := stemp.CompileStruct("{_:w=3}Hello [{Name:j=c,w=10,f=-}], I'm {BotName}. Nice to meet you {asdasds}. I'm accessing the values from a struct!", myClient)
 
 	result := stemp.CompileJSON("{_:w=3}|{col1:j=c,w=10}|{col2:j=c,w=40}|\n{_:w=60,f=-}\n", `{"col1": "Name", "col2": "Address"}`)
 	for idx, d := range data {
