@@ -39,7 +39,7 @@ func main() {
 	}
 	fmt.Println(result)
 	
-	fmt.Println(stemp.Inline("{1} is {2:w=4,j=r,f=0} degrees celsius.", "Today", 23))
+	fmt.Println(stemp.Inline("{0} is {1:w=4,j=r,f=0} degrees celsius.", "Today", 23))
 }
 
 ```
