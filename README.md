@@ -39,7 +39,7 @@ func main() {
 	}
 	fmt.Println(result)
 	
-	fmt.Println(stemp.Inline("{1} is {2} degrees celsius.", "Today", 23))
+	fmt.Println(stemp.Inline("{1} is {2:w=4,j=r,f=0} degrees celsius.", "Today", 23))
 }
 
 ```
@@ -51,7 +51,7 @@ Hello [***Noku***], I'm RegBot. Nice to meet you {asdasds}. I'm accessing the va
 ---------------------------------------------------
 0  |   Mays   |            123 st. 456 Lane            |
 1  |  Harold  |        523 st. Sunset Overdrive        |
-Today is 23 degrees celsius.
+Today is 0023 degrees celsius.
 ```
 
 ## Parameters
